@@ -81,7 +81,7 @@ int	line_print(char **line, t_map_prop **map_prop, t_win_prop **win_prop, int he
 			+ (*map_prop)->width * (*map_prop)->bytes_pp * (*win_prop)->scale
 			+ (*map_prop)->height * (*map_prop)->line_size * (*win_prop)->scale;
 		pixel = rotated_px(pixel, map_prop, width, height, win_prop)
-			+ offset_z(2000, map_height, map_prop);
+			+ offset_z(2500, map_height, map_prop);
 		set_hipsometric_color(pixel, map_height, map_prop, win_prop);
 		(*map_prop)->width++;
 	}
