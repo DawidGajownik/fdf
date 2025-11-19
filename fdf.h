@@ -73,5 +73,7 @@ void	set_padding(t_win_prop **win_prop, t_map_prop **map_prop);
 int		img_gen(char **file_split, t_map_prop **map_prop,
 			t_win_prop **win_prop);
 int		fdf(char *filename);
+void	set_hipsometric_color(unsigned char *pixel, int map_height,
+			t_map_prop **map_prop, t_win_prop **win_prop);
 
 #endif

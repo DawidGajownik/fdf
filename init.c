@@ -53,7 +53,7 @@ static int	map_init(t_vars **vars, t_map_prop **map_prop)
 	(*map_prop)->height = 0;
 	(*map_prop)->height_offset = 0;
 	(*map_prop)->low_high_diff = 0;
-	(*map_prop)->grades = 50;
+	(*map_prop)->grades = 0;
 	(*map_prop)->img_data = mlx_get_data_addr((*vars)->img,
 			&(*map_prop)->bits_pp, &(*map_prop)->line_size,
 			&(*map_prop)->endian);
@@ -66,24 +66,28 @@ static int	map_init(t_vars **vars, t_map_prop **map_prop)
 int	init_all(t_win_prop **win_prop, t_vars **vars,
 t_map_prop **map_prop, char *filename)
 {
-	*win_prop = malloc(sizeof(t_win_prop));
-	if (!*win_prop)
-		return (-1);
-	(*win_prop)->width = 1000;
-	(*win_prop)->height = 1000;
-	(*win_prop)->padding = 0;
 	*vars = malloc(sizeof(t_vars));
 	if (!*vars)
-		return (-1);
-	if (vars_init(vars, win_prop, filename) < 0)
 		return (-1);
 	*map_prop = malloc(sizeof(t_map_prop));
 	if (!*map_prop)
 		return (-1);
-	if (map_init(vars, map_prop) < 0)
+	*win_prop = malloc(sizeof(t_win_prop));
+	if (!*win_prop)
 		return (-1);
 	(*vars)->file_content = read_file(filename, &(*map_prop)->bytes_read);
 	if (!(*vars)->file_content)
 		return (-1);
+	(*win_prop)->file_split = ft_split((*vars)->file_content, '\n');
+	(*win_prop)->width = 2000;
+	(*win_prop)->height = 1000;
+	(*win_prop)->padding = 0;
+	
+	if (vars_init(vars, win_prop, filename) < 0)
+		return (-1);
+	
+	if (map_init(vars, map_prop) < 0)
+		return (-1);
+
 	return (0);
 }
