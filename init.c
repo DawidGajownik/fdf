@@ -44,6 +44,7 @@ static int	vars_init(t_vars **vars, t_win_prop **win_prop, char *filename)
 			(*win_prop)->width, (*win_prop)->height);
 	if (!(*vars)->img)
 		return (-1);
+        (*vars)->win_prop = *win_prop;
 	return (0);
 }
 
@@ -54,12 +55,14 @@ static int	map_init(t_vars **vars, t_map_prop **map_prop)
 	(*map_prop)->height_offset = 0;
 	(*map_prop)->low_high_diff = 0;
 	(*map_prop)->grades = 0;
+
 	(*map_prop)->img_data = mlx_get_data_addr((*vars)->img,
 			&(*map_prop)->bits_pp, &(*map_prop)->line_size,
 			&(*map_prop)->endian);
 	if (!(*map_prop)->img_data)
 		return (-1);
 	(*map_prop)->bytes_pp = (*map_prop)->bits_pp / 8;
+        (*vars)->map_prop = *map_prop;
 	return (0);
 }
 
@@ -79,10 +82,12 @@ t_map_prop **map_prop, char *filename)
 	if (!(*vars)->file_content)
 		return (-1);
 	(*win_prop)->file_split = ft_split((*vars)->file_content, '\n');
-	(*win_prop)->width = 2000;
-	(*win_prop)->height = 1000;
+	(*win_prop)->width = 4000;
+	(*win_prop)->height = 2000;
 	(*win_prop)->padding = 0;
-	
+        (*win_prop)->offset_x = 0;
+        (*win_prop)->offset_y = 0;
+        (*win_prop)->scale = 0;
 	if (vars_init(vars, win_prop, filename) < 0)
 		return (-1);
 	

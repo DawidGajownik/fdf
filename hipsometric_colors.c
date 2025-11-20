@@ -52,23 +52,14 @@ static unsigned int color_1200_plus(int map_height)
 	return r * 256 * 256 + g * 256 + b;
 }
 
-
-
 void	set_hipsometric_color(unsigned char *pixel, int map_height, t_map_prop **map_prop, t_win_prop **win_prop)
 {
-	if (1==1
-	//pixel_in_range_if_zero_grades(pixel, map_prop, win_prop
-	//)
-	 //&& (!pixel_out(pixel, map_prop) || (*map_prop)->width == 0)
-	 )
-	{
-		if (map_height <= 0)
-			*(unsigned int *)pixel = color_0_minus(map_height, map_prop);
-		else if (map_height < 300)
-			*(unsigned int *)pixel = color_0_300(map_height);
-		else if (map_height < 1200)
-			*(unsigned int *)pixel = color_300_1200(map_height);
-		else
-			*(unsigned int *)pixel = color_1200_plus(map_height);
-	}
+	if (map_height <= 0)
+	      	*(unsigned int *)pixel = color_0_minus(map_height, map_prop);
+	else if (map_height < 300)
+		*(unsigned int *)pixel = color_0_300(map_height);
+	else if (map_height < 1200)
+		*(unsigned int *)pixel = color_300_1200(map_height);
+	else
+		*(unsigned int *)pixel = color_1200_plus(map_height);
 }

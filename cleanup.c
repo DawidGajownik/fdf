@@ -17,6 +17,7 @@ int	close_window(void *param)
 	t_vars	*vars;
 
 	vars = (t_vars *)param;
+	free_mlx(vars->win_prop->file_split, &vars->win_prop, &vars->map_prop);
 	if (vars->img)
 		mlx_destroy_image(vars->mlx, vars->img);
 	if (vars->win)

@@ -23,6 +23,12 @@
 # include <fcntl.h>
 # include <math.h>
 
+typedef struct s_size
+{
+  int width;
+  int height;
+} t_size;
+
 typedef struct s_map_prop
 {
 	int	height;
@@ -45,6 +51,7 @@ typedef struct s_win_prop
 	unsigned int	scale;
 	unsigned int	padding;
 	int	mouse_down;
+        int     ctrl_down;
 	int	last_x;
 	int	last_y;
 	int offset_x;
@@ -58,6 +65,8 @@ typedef struct s_vars
 	void	*win;
 	void	*img;
 	char	*file_content;
+        t_win_prop  *win_prop;
+        t_map_prop  *map_prop;
 }	t_vars;
 
 char	**ft_split(char const *s, char c);
