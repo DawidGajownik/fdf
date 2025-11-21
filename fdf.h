@@ -34,6 +34,7 @@ typedef struct s_map_prop
 	int	height;
 	int	width;
 	unsigned int	grades;
+	unsigned int	rotation;
 	unsigned int	bits_pp;
 	unsigned int	bytes_pp;
 	unsigned char	*img_data;
@@ -67,6 +68,7 @@ typedef struct s_vars
 	char	*file_content;
         t_win_prop  *win_prop;
         t_map_prop  *map_prop;
+        t_size size;
 }	t_vars;
 
 char	**ft_split(char const *s, char c);

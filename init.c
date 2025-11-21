@@ -82,8 +82,8 @@ t_map_prop **map_prop, char *filename)
 	if (!(*vars)->file_content)
 		return (-1);
 	(*win_prop)->file_split = ft_split((*vars)->file_content, '\n');
-	(*win_prop)->width = 4000;
-	(*win_prop)->height = 2000;
+	(*win_prop)->width = 2500;
+	(*win_prop)->height = 1500;
 	(*win_prop)->padding = 0;
         (*win_prop)->offset_x = 0;
         (*win_prop)->offset_y = 0;
