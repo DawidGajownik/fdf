@@ -81,6 +81,7 @@ unsigned char	*rotated_px(unsigned char *pixel, t_map_prop **map_prop, int width
         int out_x;
         int out_y;
 
+	(*win_prop)->offset_y = -260*(*win_prop)->scale;
 		x = ((*map_prop)->width*(*win_prop)->scale-(*win_prop)->width/2) + centering_offset_x(win_prop, width);
 		y = -((*map_prop)->height*(*win_prop)->scale-(*win_prop)->height/2) - centering_offset_y(win_prop, height);
         half_x = (*win_prop)->width/2;
@@ -152,7 +153,8 @@ int	draw(char **file_split, t_map_prop **map_prop, t_win_prop **win_prop)
 	        else
 		        (*win_prop)->scale = (*win_prop)->height/((*map_prop)->height);
         }
-	//(*win_prop)->scale = 1;
+	if ((*win_prop)->scale == 0)
+		(*win_prop)->scale = 1;
 	height = (*map_prop)->height;
 	(*map_prop)->height = 0;
 	while (file_split[(*map_prop)->height] != NULL)
@@ -166,7 +168,108 @@ int	draw(char **file_split, t_map_prop **map_prop, t_win_prop **win_prop)
 	}
 	return (0);
 }
+int centering_offset_y_object(t_object *object, int height)
+{
+	int offset_y = (object->height - height * object->scale);
+	return offset_y/2;
+}
 
+int centering_offset_x_object(t_object *object, int width)
+{
+	int offset_x = (object->width  - width  * object->scale);
+	return offset_x/2;
+}
+unsigned char	*rotated_px_object(unsigned char *pixel, t_object *object, int width, int height, t_win_prop **win_prop)
+{
+	int x;
+	int y;
+	int half_x;
+	int out_x;
+	int out_y;
+
+	object->grades = 0;
+
+	x = (object->width*object->scale/4-(*win_prop)->width/2)
+	//+ centering_offset_x_object(object, width)
+	;
+	y = -(object->height*object->scale/4-(*win_prop)->height/2)
+	//- centering_offset_y_object(object, height)
+	;
+	half_x = (*win_prop)->width/2;
+	out_x = (int)round(x * cos(object->grades * M_PI / 200.0) - y * sin(object->grades * M_PI / 200.0)) + object->offset_x;
+	out_y = (int)round(x * sin(object->grades * M_PI / 200.0) + y * cos(object->grades * M_PI / 200.0)) - object->offset_y;
+
+	//ft_printf("przed %d %d\n ", out_y, out_x);
+	//out_x = out_x + perspective_offset_x(win_prop, map_prop, out_x, out_y, height);
+	//out_y = out_y + perspective_offset_y(win_prop, map_prop, out_x, out_y, height);
+
+	Vec2 p = map_to_sphere_2D(out_x, out_y,
+					  width*object->scale/4, height*object->scale/4,
+					  height/2*object->scale/4, height/2*object->scale/4);
+	//ft_printf("po %d\n", out_y);
+	out_x = p.x;
+	out_y = p.y;
+
+	if (x <= -half_x || x >= half_x)
+		return (NULL);
+	return (object->img_data
+			+ ( ((*win_prop)->height/8 - (out_y*object->scale)) * object->line_size )
+			+ ( ((out_x) + (*win_prop)->width/8) * object->bytes_pp ));
+	//return(pixel);
+}
+
+int	line_print_object(char **line, t_object *object, t_win_prop **win_prop, int height)
+{
+	unsigned char	*pixel;
+	int width;
+	int map_height;
+
+	width = object->width;
+	object->width = 0;
+	while (line[object->width])
+	{
+		map_height = ft_atoi(line[object->width]);
+		pixel = object->img_data
+			+ object->width * object->bytes_pp * object->scale/4
+			+ object->height * object->line_size * object->scale/4;
+		pixel = rotated_px_object(pixel, object, width, height, win_prop);
+		// 	+ offset_z(1000/(*win_prop)->scale, map_height, map_prop)
+		// 	;
+		 if (pixel
+		 	//
+		 	//&& pixel_in_screen(pixel, win_prop, map_prop, width, height)
+		 	)
+		 	set_moon_color(pixel,map_height);
+		object->width++;
+	}
+	return (0);
+}
+
+int draw_object(t_object *object, t_win_prop **win_prop) {
+	char	**line;
+	int	height;
+	if (object->scale == 0)
+	{
+		if ((*win_prop)->width/object->width < (*win_prop)->height/object->height)
+			object->scale = (*win_prop)->width/(object->width);
+		else
+			object->scale = (*win_prop)->height/(object->height);
+	}
+	if (object->scale == 0)
+		object->scale = 1;
+	height = object->height;
+	object->height = 0;
+	while (object->file_split[object->height] != NULL)
+	{
+		line = ft_split(object->file_split[object->height], ' ');
+		if (!line)
+			return (-1);
+		line_print_object(line, object, win_prop, height);
+		free_mlx(line, NULL, NULL);
+		object->height++;
+	}
+	return (0);
+}
 int mouse_press(int button, int x, int y, void *param)
 {
     t_vars **vars = (t_vars **)param;
@@ -257,6 +360,21 @@ int mouse_move(int x, int y, void *param)
                 (*vars)->img = mlx_new_image((*vars)->mlx, (*vars)->win_prop->width, (*vars)->win_prop->height);
                 draw((*vars)->win_prop->file_split, &(*vars)->map_prop, &(*vars)->win_prop);
                 mlx_put_image_to_window((*vars)->mlx, (*vars)->win, (*vars)->img,0, 0);
+        	(*vars)->object->offset_x += dx;
+        	(*vars)->object->offset_y += dy;
+        	(*vars)->object->last_x = x;
+        	(*vars)->object->last_y = y;
+        	mlx_destroy_image((*vars)->mlx, (*vars)->object->img);
+        	(*vars)->object->img = mlx_new_image((*vars)->mlx, (*vars)->win_prop->width/4, (*vars)->win_prop->height/4);
+        	draw_object((*vars)->object, &(*vars)->win_prop);
+        	mlx_put_image_to_window((*vars)->mlx, (*vars)->win, (*vars)->object->img,200, 200);
+        	ft_printf("%d %d %d %d %d %d\n",
+        		(*vars)->object->offset_x,
+        		(*vars)->object->offset_y,
+        		(*vars)->object->scale,
+        		(*vars)->win_prop->offset_x,
+        		(*vars)->win_prop->offset_y,
+        		(*vars)->win_prop->scale);
         }
 
         
@@ -282,6 +400,11 @@ int	globe_move(void *param) {
 		(*vars)->img = mlx_new_image((*vars)->mlx, (*vars)->win_prop->width, (*vars)->win_prop->height);
 		draw((*vars)->win_prop->file_split, &(*vars)->map_prop, &(*vars)->win_prop);
 		mlx_put_image_to_window((*vars)->mlx, (*vars)->win, (*vars)->img,0, 0);
+		(*vars)->object->offset_x++;
+		mlx_destroy_image((*vars)->mlx, (*vars)->object->img);
+		(*vars)->object->img = mlx_new_image((*vars)->mlx, (*vars)->win_prop->width/4, (*vars)->win_prop->height/4);
+		draw_object((*vars)->object, &(*vars)->win_prop);
+		mlx_put_image_to_window((*vars)->mlx, (*vars)->win, (*vars)->object->img,200, 200);
 	}
 }
 
@@ -290,14 +413,20 @@ int	fdf(char *filename)
 	t_vars		*vars;
 	t_map_prop	*map_prop;
 	t_win_prop	*win_prop;
+	t_object	*moon;
 
 	if (init_all(&win_prop, &vars, &map_prop, filename) < 0)
 		return (-1);
+	init_object(vars, &moon, "maps/USGS_ULCN2005_grid.txt_OCEAN1_L.fdf");
+	vars->object = moon;
 	if (set_res(win_prop->file_split, &map_prop) < 0)
 		return (-1);
+	if (set_res_object(moon) < 0)
+		return (-1);
 	draw(win_prop->file_split, &map_prop, &win_prop);
-
+	draw_object(moon, &win_prop);
 	mlx_put_image_to_window(vars->mlx, vars->win, vars->img, 0, 0);
+	mlx_put_image_to_window(vars->mlx, vars->win, moon->img, 0, 0);
 	mouse_actions(&vars);
 	mlx_loop_hook(vars->mlx, globe_move, &vars);
 	mlx_hook(vars->win, 17, 0, close_window, vars);

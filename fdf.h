@@ -29,6 +29,26 @@ typedef struct s_size
   int height;
 } t_size;
 
+typedef struct s_object {
+	ssize_t			bytes_read;
+	char	*file_content;
+	char	**file_split;
+	void	*img;
+	unsigned char	*img_data;
+	unsigned int	width;
+	unsigned int	height;
+	unsigned int	bits_pp;
+	unsigned int	bytes_pp;
+	unsigned int	line_size;
+	unsigned int	endian;
+	unsigned int	scale;
+	unsigned int	grades;
+	int	last_x;
+	int	last_y;
+	int offset_x;
+	int offset_y;
+}	t_object;
+
 typedef struct s_map_prop
 {
 	int	height;
@@ -71,6 +91,7 @@ typedef struct s_vars
         t_win_prop  *win_prop;
         t_map_prop  *map_prop;
         t_size size;
+	t_object	*object;
 }	t_vars;
 
 char	**ft_split(char const *s, char c);
@@ -88,5 +109,11 @@ int		img_gen(char **file_split, t_map_prop **map_prop,
 int		fdf(char *filename);
 void	set_hipsometric_color(unsigned char *pixel, int map_height,
 			t_map_prop **map_prop, t_win_prop **win_prop);
+int	init_object(t_vars *vars, t_object **object, char *filename);
+int	set_res_object(t_object *object);
+void	set_hipsometric_color_object(unsigned char *pixel, int map_height, t_object *object, t_win_prop **win_prop);
+void	set_moon_color(unsigned char *pixel, int map_height);
+
+
 
 #endif

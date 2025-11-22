@@ -66,6 +66,42 @@ static int	map_init(t_vars **vars, t_map_prop **map_prop)
 	return (0);
 }
 
+static void	win_init(t_win_prop **win_prop, char **file_content) {
+	(*win_prop)->file_split = ft_split(file_content, '\n');
+	(*win_prop)->width = 1920;
+	(*win_prop)->height = 1080;
+	(*win_prop)->padding = 0;
+	(*win_prop)->offset_x = 0;
+	(*win_prop)->offset_y = 0;
+	(*win_prop)->scale = 0;
+}
+
+int	init_object(t_vars *vars, t_object **object, char *filename) {
+	*object = malloc(sizeof(t_object));
+	if (!*object)
+		return (-1);
+	(*object)->file_content = read_file(filename, &(*object)->bytes_read);
+	if (!(*object)->file_content)
+		return (-1);
+	(*object)->file_content[(*object)->bytes_read] = '\0';
+	(*object)->file_split = ft_split((*object)->file_content, '\n');
+
+	(*object)->scale = 1;
+	(*object)->img = mlx_new_image(vars->mlx, vars->win_prop->width/4, vars->win_prop->height/4);
+	if (!(*object)->img)
+		return (-1);
+	(*object)->img_data = mlx_get_data_addr((*object)->img, &(*object)->bits_pp, &(*object)->line_size, &(*object)->endian);
+	if (!(*object)->img_data)
+		return (-1);
+	(*object)->bytes_pp = (*object)->bits_pp / 8;
+	(*object)->width = 0;
+	(*object)->height = 0;
+	(*object)->offset_x = 0;
+	(*object)->offset_y = 0;
+	(*object)->last_x = 0;
+	(*object)->last_y = 0;
+}
+
 int	init_all(t_win_prop **win_prop, t_vars **vars,
 t_map_prop **map_prop, char *filename)
 {
@@ -81,18 +117,10 @@ t_map_prop **map_prop, char *filename)
 	(*vars)->file_content = read_file(filename, &(*map_prop)->bytes_read);
 	if (!(*vars)->file_content)
 		return (-1);
-	(*win_prop)->file_split = ft_split((*vars)->file_content, '\n');
-	(*win_prop)->width = 3700;
-	(*win_prop)->height = 2000;
-	(*win_prop)->padding = 0;
-        (*win_prop)->offset_x = 0;
-        (*win_prop)->offset_y = 0;
-        (*win_prop)->scale = 0;
+	win_init(win_prop, (*vars)->file_content);
 	if (vars_init(vars, win_prop, filename) < 0)
 		return (-1);
-	
 	if (map_init(vars, map_prop) < 0)
 		return (-1);
-
 	return (0);
 }
