@@ -52,7 +52,9 @@ typedef struct s_win_prop
 	unsigned int	scale;
 	unsigned int	padding;
 	int	mouse_down;
-        int     ctrl_down;
+	int     ctrl_down;
+	int     q_down;
+
 	int	last_x;
 	int	last_y;
 	int offset_x;

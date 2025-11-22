@@ -12,6 +12,8 @@
 
 #include "fdf.h"
 
+#include <stdio.h>
+
 int	offset_z(int multiplier, int map_height, t_map_prop **map_prop)
 {
 	return -(map_height/multiplier*(*map_prop)->bytes_pp
@@ -29,6 +31,48 @@ int centering_offset_x(t_win_prop **win_prop, int width)
         int offset_x = ((*win_prop)->width  - width  * (*win_prop)->scale);
         return offset_x/2;
 }
+
+int	perspective_offset_x(t_win_prop **win_prop, t_map_prop **map_prop, int out_x, int out_y, int height)
+{
+
+	int offset_x = sqrt(out_x*out_x)*(height-out_y*3)/(*win_prop)->height/2;
+	//if (out_x%50 == 0 && out_y%50 == 0)
+		//ft_printf("%d %d %d\n", (*map_prop)->height*(*win_prop)->scale, out_x, out_y);
+	if (out_x<0)
+		return -offset_x;
+	return offset_x;
+}
+int perspective_offset_y(t_win_prop **win_prop, t_map_prop **map_prop, int out_x, int out_y, int height)
+{
+	return -((height-(*map_prop)->height)/10);
+}
+
+typedef struct {
+	int x, y;
+} Vec2;
+
+Vec2 map_to_sphere_2D(int px, int py, int width, int height,
+					  int radiusX, int radiusY)
+{
+	// mapowanie pikseli do UV (0..1)
+	float u = (float)px / (float)width;
+	float v = (float)py / (float)height;
+
+	// długość i szerokość geograficzna
+	float lambda = 2.0f * M_PI * (u - 0.5f);   // longitude
+	float phi    = M_PI * (v - 0.5f);          // latitude
+
+	// rzutowanie ortograficzne na 2D
+	float xf = cosf(phi) * sinf(lambda);
+	float yf = sinf(phi);
+
+	Vec2 out;
+	out.x = (int)(xf * radiusX);
+	out.y = (int)(yf * radiusY);
+
+	return out;
+}
+
 unsigned char	*rotated_px(unsigned char *pixel, t_map_prop **map_prop, int width, int height, t_win_prop **win_prop)
 {
         int x;
@@ -37,16 +81,29 @@ unsigned char	*rotated_px(unsigned char *pixel, t_map_prop **map_prop, int width
         int out_x;
         int out_y;
 
-	x = ((*map_prop)->width*(*win_prop)->scale-(*win_prop)->width/2) + centering_offset_x(win_prop, width);
-	y = -((*map_prop)->height*(*win_prop)->scale-(*win_prop)->height/2) - centering_offset_y(win_prop, height);
+		x = ((*map_prop)->width*(*win_prop)->scale-(*win_prop)->width/2) + centering_offset_x(win_prop, width);
+		y = -((*map_prop)->height*(*win_prop)->scale-(*win_prop)->height/2) - centering_offset_y(win_prop, height);
         half_x = (*win_prop)->width/2;
-	out_x = (int)round(x * cos((*map_prop)->grades * M_PI / 200.0) - y * sin((*map_prop)->grades * M_PI / 200.0)) + (*win_prop)->offset_x;
-	out_y = (int)round(x * sin((*map_prop)->grades * M_PI / 200.0) + y * cos((*map_prop)->grades * M_PI / 200.0)) - (*win_prop)->offset_y;
+		out_x = (int)round(x * cos((*map_prop)->grades * M_PI / 200.0) - y * sin((*map_prop)->grades * M_PI / 200.0)) + (*win_prop)->offset_x;
+		out_y = (int)round(x * sin((*map_prop)->grades * M_PI / 200.0) + y * cos((*map_prop)->grades * M_PI / 200.0)) - (*win_prop)->offset_y;
+
+		//ft_printf("przed %d %d\n ", out_y, out_x);
+		//out_x = out_x + perspective_offset_x(win_prop, map_prop, out_x, out_y, height);
+		//out_y = out_y + perspective_offset_y(win_prop, map_prop, out_x, out_y, height);
+
+		Vec2 p = map_to_sphere_2D(out_x, out_y,
+						  width*(*win_prop)->scale, height*(*win_prop)->scale,
+						  height/2*(*win_prop)->scale, height/2*(*win_prop)->scale);
+		//ft_printf("po %d\n", out_y);
+
+		out_x = p.x;
+		out_y = p.y;
+
         if (out_x <= -half_x || out_x >= half_x)
-          return (NULL);
+					return (NULL);
     	return ((*map_prop)->img_data
-	+ ( ((*win_prop)->height/2 - (out_y)) * (*map_prop)->line_size )
-	+ ( ((out_x) + (*win_prop)->width/2) * (*map_prop)->bytes_pp ));
+				+ ( ((*win_prop)->height/2 - (out_y)) * (*map_prop)->line_size )
+				+ ( ((out_x) + (*win_prop)->width/2) * (*map_prop)->bytes_pp ));
 }
 
 char pixel_in_screen(unsigned char *pixel, t_win_prop **win_prop, t_map_prop **map_prop, int width, int height)
@@ -95,6 +152,7 @@ int	draw(char **file_split, t_map_prop **map_prop, t_win_prop **win_prop)
 	        else
 		        (*win_prop)->scale = (*win_prop)->height/((*map_prop)->height);
         }
+	//(*win_prop)->scale = 1;
 	height = (*map_prop)->height;
 	(*map_prop)->height = 0;
 	while (file_split[(*map_prop)->height] != NULL)
@@ -120,7 +178,7 @@ int mouse_press(int button, int x, int y, void *param)
 	}
         if ((*vars)->win_prop->ctrl_down && (button == 4 || button == 5))
     {
-        int delta_angle = (button == 4) ? 10 : -10;
+        int delta_angle = (button == 4) ? 5 : -5;
         (*vars)->map_prop->grades =
             ((*vars)->map_prop->grades + delta_angle + 400) % 400;
         mlx_destroy_image((*vars)->mlx, (*vars)->img);
@@ -152,6 +210,9 @@ int mouse_press(int button, int x, int y, void *param)
 int key_press(int keycode, void *param)
 {
     t_vars **vars = (t_vars **)param;
+	ft_printf("%d\n", keycode);
+	if (keycode == 113 )
+		(*vars)->win_prop->q_down = 1;
     if (keycode == 65507 )
         (*vars)->win_prop->ctrl_down = 1;
     return (0);
@@ -160,7 +221,8 @@ int key_press(int keycode, void *param)
 int key_release(int keycode, void *param)
 {
     t_vars **vars = (t_vars **)param;
-
+	if (keycode == 113 )
+		(*vars)->win_prop->q_down = 1;
     if (keycode == 65507)
         (*vars)->win_prop->ctrl_down = 0;
     return (0);
@@ -211,6 +273,18 @@ int	mouse_actions(t_vars **vars)
         mlx_hook((*vars)->win, 3, 1L<<1, key_release, vars);
 }
 
+int	globe_move(void *param) {
+	t_vars **vars = (t_vars **)param;
+	if ((*vars)->win_prop->q_down) {
+		//usleep(50000);
+		(*vars)->win_prop->offset_x += 1;
+		mlx_destroy_image((*vars)->mlx, (*vars)->img);
+		(*vars)->img = mlx_new_image((*vars)->mlx, (*vars)->win_prop->width, (*vars)->win_prop->height);
+		draw((*vars)->win_prop->file_split, &(*vars)->map_prop, &(*vars)->win_prop);
+		mlx_put_image_to_window((*vars)->mlx, (*vars)->win, (*vars)->img,0, 0);
+	}
+}
+
 int	fdf(char *filename)
 {
 	t_vars		*vars;
@@ -225,7 +299,7 @@ int	fdf(char *filename)
 
 	mlx_put_image_to_window(vars->mlx, vars->win, vars->img, 0, 0);
 	mouse_actions(&vars);
-
+	mlx_loop_hook(vars->mlx, globe_move, &vars);
 	mlx_hook(vars->win, 17, 0, close_window, vars);
 	mlx_loop(vars->mlx);
 	return (0);
