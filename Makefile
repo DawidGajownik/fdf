@@ -9,7 +9,7 @@ MY_OBJECTS = $(MY_SOURCES:.c=.o)
 
 CFLAGS = -Wall -Wextra -Werror
 
-FLAGS = -g -Iminilibx-linux -Lminilibx-linux -lmlx -lXext -lX11 -lm -lz
+FLAGS = -g -Iminilibx-linux -Lminilibx-linux -lmlx -lXext -lX11 -lm -lz -fsanitize=address -g
 
 all: $(ARCHIVE_NAME)
 

@@ -14,7 +14,7 @@
 # define FDF_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 2147483646
+#  define BUFFER_SIZE 50000000
 # endif
 
 # include "mlx.h"
@@ -74,11 +74,17 @@ typedef struct s_win_prop
 	int	mouse_down;
 	int     ctrl_down;
 	int     q_down;
-
+	int		c_down;
+	int		a_down;
+	int		w_down;
+	int		s_down;
+	int		x_down;
 	int	last_x;
 	int	last_y;
 	int offset_x;
 	int offset_y;
+	int sphere_correction_x;
+	int sphere_correction_y;
 	char **file_split;
 }	t_win_prop;
 
@@ -88,9 +94,9 @@ typedef struct s_vars
 	void	*win;
 	void	*img;
 	char	*file_content;
-        t_win_prop  *win_prop;
-        t_map_prop  *map_prop;
-        t_size size;
+	t_win_prop  *win_prop;
+	t_map_prop  *map_prop;
+	t_size size;
 	t_object	*object;
 }	t_vars;
 
@@ -106,10 +112,10 @@ int		set_res(char **file_split, t_map_prop **map_prop);
 void	set_padding(t_win_prop **win_prop, t_map_prop **map_prop);
 int		img_gen(char **file_split, t_map_prop **map_prop,
 			t_win_prop **win_prop);
-int		fdf(char *filename);
+int		fdf(char *filename, char *filename2);
 void	set_hipsometric_color(unsigned char *pixel, int map_height,
 			t_map_prop **map_prop, t_win_prop **win_prop);
-int	init_object(t_vars *vars, t_object **object, char *filename);
+int	init_object(t_vars **vars, t_object **object, char *filename);
 int	set_res_object(t_object *object);
 void	set_hipsometric_color_object(unsigned char *pixel, int map_height, t_object *object, t_win_prop **win_prop);
 void	set_moon_color(unsigned char *pixel, int map_height);

@@ -36,8 +36,9 @@ static int	vars_init(t_vars **vars, t_win_prop **win_prop, char *filename)
 	(*vars)->mlx = mlx_init();
 	if (!(*vars)->mlx)
 		return (-1);
-	(*vars)->win = mlx_new_window((*vars)->mlx,
-			(*win_prop)->width, (*win_prop)->height, filename);
+	//(*vars)->win = mlx_new_window((*vars)->mlx,
+			//1980, 1080, filename);
+	(*vars)->win = mlx_new_window((*vars)->mlx, (*win_prop)->width+400, (*win_prop)->height, filename);
 	if (!(*vars)->win)
 		return (-1);
 	(*vars)->img = mlx_new_image((*vars)->mlx,
@@ -74,9 +75,23 @@ static void	win_init(t_win_prop **win_prop, char **file_content) {
 	(*win_prop)->offset_x = 0;
 	(*win_prop)->offset_y = 0;
 	(*win_prop)->scale = 0;
+	(*win_prop)->mouse_down = 0;
+	(*win_prop)->ctrl_down = 0;
+	(*win_prop)->q_down = 0;
+	(*win_prop)->c_down = 0;
+	(*win_prop)->a_down = 0;
+	(*win_prop)->w_down = 0;
+	(*win_prop)->s_down = 0;
+	(*win_prop)->x_down = 0;
+	(*win_prop)->last_x = 0;
+	(*win_prop)->last_y = 0;
+	(*win_prop)->offset_x = 0;
+	(*win_prop)->offset_y = 0;
+	(*win_prop)->sphere_correction_x = 0;
+	(*win_prop)->sphere_correction_y = 0;
 }
 
-int	init_object(t_vars *vars, t_object **object, char *filename) {
+int	init_object(t_vars **vars, t_object **object, char *filename) {
 	*object = malloc(sizeof(t_object));
 	if (!*object)
 		return (-1);
@@ -86,8 +101,8 @@ int	init_object(t_vars *vars, t_object **object, char *filename) {
 	(*object)->file_content[(*object)->bytes_read] = '\0';
 	(*object)->file_split = ft_split((*object)->file_content, '\n');
 
-	(*object)->scale = 1;
-	(*object)->img = mlx_new_image(vars->mlx, vars->win_prop->width/4, vars->win_prop->height/4);
+	(*object)->scale = 0;
+	(*object)->img = mlx_new_image((*vars)->mlx, (*vars)->win_prop->width/4, (*vars)->win_prop->height/4);
 	if (!(*object)->img)
 		return (-1);
 	(*object)->img_data = mlx_get_data_addr((*object)->img, &(*object)->bits_pp, &(*object)->line_size, &(*object)->endian);
@@ -100,6 +115,7 @@ int	init_object(t_vars *vars, t_object **object, char *filename) {
 	(*object)->offset_y = 0;
 	(*object)->last_x = 0;
 	(*object)->last_y = 0;
+	(*vars)->object = *object;
 }
 
 int	init_all(t_win_prop **win_prop, t_vars **vars,
