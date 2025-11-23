@@ -23,6 +23,10 @@
 # include <fcntl.h>
 # include <math.h>
 
+typedef struct {
+	int x, y;
+} Vec2;
+
 typedef struct s_size
 {
   int width;
@@ -119,7 +123,27 @@ int	init_object(t_vars **vars, t_object **object, char *filename);
 int	set_res_object(t_object *object);
 void	set_hipsometric_color_object(unsigned char *pixel, int map_height, t_object *object, t_win_prop **win_prop);
 void	set_moon_color(unsigned char *pixel, int map_height);
-
+int	draw(char **file_split, t_map_prop **map_prop, t_win_prop **win_prop);
+int	offset_z(int multiplier, int map_height, t_map_prop **map_prop);
+int centering_offset_y(t_win_prop **win_prop, int height);
+int centering_offset_x(t_win_prop **win_prop, int width);
+int	perspective_offset_x(t_win_prop **win_prop, int out_x, int out_y, int height);
+int perspective_offset_y(t_map_prop **map_prop, int height);
+Vec2 map_to_sphere_2D(int px, int py, int width, int height,
+					  int radiusX, int radiusY);
+unsigned char	*transformed_px(t_map_prop **map_prop, int width, int height, t_win_prop **win_prop);
+int draw_object(t_object *object, t_win_prop **win_prop);
+unsigned char	*transformed_px_object(t_object *object, int width, int height, t_win_prop **win_prop);
+int	globe_move(void *param);
+int	actions(t_vars **vars);
+int mouse_move(int x, int y, void *param);
+int mouse_release(int button, int x, int y, void *param);
+int mouse_press(int button, int x, int y, void *param);
+int key_press(int keycode, void *param);
+void	keys_map(int keycode, t_vars **vars);
+int key_release(int keycode, void *param);
+void redraw (t_vars **vars);
+void redraw_object (t_vars **vars);
 
 
 #endif
