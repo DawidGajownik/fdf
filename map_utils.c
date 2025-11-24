@@ -61,12 +61,6 @@ static int	set_width_this(char **line, t_object *object)
 	rows = 0;
 	while (line[rows] != NULL)
 	{
-		// if (object->height_offset > ft_atoi(line[rows]))
-		// 	object->height_offset = ft_atoi(line[rows]);
-		// if (object->low_high_diff < ft_atoi(line[rows])
-		// 	- object->height_offset)
-		// 	object->low_high_diff = ft_atoi(line[rows])
-		// 		- object->height_offset;
 		rows++;
 		if (object->width == 0 || object->width < rows)
 			object->width = rows;
@@ -79,6 +73,7 @@ static int	set_width_this(char **line, t_object *object)
 int	set_res_object(t_object *object)
 {
 	char	**line;
+
 	while (object->file_split[object->height] != NULL)
 	{
 		line = ft_split(object->file_split[object->height], ' ');
@@ -90,8 +85,6 @@ int	set_res_object(t_object *object)
 		free_mlx(line, NULL, NULL);
 		object->height++;
 	}
-	//if (object->low_high_diff > 256)
-	//	object->low_high_diff = 256;
 	return (0);
 }
 
