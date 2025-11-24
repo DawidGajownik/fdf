@@ -12,10 +12,11 @@
 
 #include "fdf.h"
 
-static char pixel_in_screen(unsigned char *pixel, t_win_prop **win_prop, t_map_prop **map_prop)
+static char pixel_in_screen(unsigned char *pixel,
+    t_win_prop **win_prop, t_map_prop **map_prop)
 {
-    unsigned char *start = (*map_prop)->img_data;
-    unsigned char *end = start + (*win_prop)->height * (*win_prop)->height*8;
+    unsigned char   *start = (*map_prop)->img_data;
+    unsigned char   *end = start + (*win_prop)->height * (*win_prop)->height*8;
     if (pixel < start || pixel >= end)
         return (NULL);
     return ('t');

@@ -12,28 +12,31 @@
 
 #include "fdf.h"
 
-int	close_window(void *param)
+void	free_object(t_vars *vars)
 {
-	t_vars	*vars;
-
-	vars = (t_vars *)param;
-	free_mlx(vars->win_prop->file_split, &vars->win_prop, &vars->map_prop);
-	if (vars->object) {
+	if (vars->object)
+	{
 		free_mlx(vars->object->file_split, NULL, NULL);
 		if (vars->object->img)
 			mlx_destroy_image(vars->mlx, vars->object->img);
 		if (vars->object->file_content)
 			free(vars->object->file_content);
 	}
+}
+
+int	close_window(void *param)
+{
+	t_vars	*vars;
+
+	vars = (t_vars *)param;
+	free_mlx(vars->win_prop->file_split, &vars->win_prop, &vars->map_prop);
+	free_object(vars);
 	if (vars->img)
 		mlx_destroy_image(vars->mlx, vars->img);
-
 	if (vars->win)
 		mlx_destroy_window(vars->mlx, vars->win);
-
 	if (vars->file_content)
 		free(vars->file_content);
-
 	if (vars->object)
 		free(vars->object);
 	if (vars->mlx)

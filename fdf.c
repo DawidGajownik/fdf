@@ -12,11 +12,12 @@
 
 #include "fdf.h"
 
-int proceed_second_parameter (t_vars **vars, char *filename2)
+int	proceed_second_parameter(t_vars **vars, char *filename2)
 {
 	t_object	*moon;
 
-	if (filename2 != NULL) {
+	if (filename2 != NULL)
+	{
 		init_object(vars, &moon, filename2);
 		if (set_res_object(moon) < 0)
 			return (-1);
@@ -34,9 +35,9 @@ int	fdf(char *filename, char *filename2)
 	t_map_prop	*map_prop;
 	t_win_prop	*win_prop;
 
-	if (init_all(&win_prop, &vars, &map_prop, filename) < 0 ||
-		set_res(win_prop->file_split, &map_prop) < 0 ||
-		draw(win_prop->file_split, &map_prop, &win_prop) < 0)
+	if (init_all(&win_prop, &vars, &map_prop, filename) < 0
+		|| set_res(win_prop->file_split, &map_prop) < 0
+		|| draw(win_prop->file_split, &map_prop, &win_prop) < 0)
 		return (-1);
 	mlx_put_image_to_window(vars->mlx, vars->win, vars->img, 400, 0);
 	if (proceed_second_parameter(&vars, filename2) < 0)
