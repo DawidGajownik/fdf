@@ -54,9 +54,7 @@ void	free_mlx(char **split, t_win_prop **win_prop, t_map_prop **map_prop)
 	int	i;
 
 	i = 0;
-	if (!split)
-		return ;
-	while (split[i])
+	while (split && split[i])
 	{
 		free(split[i++]);
 	}

@@ -44,20 +44,25 @@ unsigned char	*transformed_px_object(t_object *object,
 static void	handle_s(t_win_prop **win_prop,
 	t_map_prop **map_prop, t_vec2 *p, int height)
 {
+	int	x;
+	int	y;
+
+	x = (*p).x;
+	y = (*p).y;
 	if ((*win_prop)->s_down == 0)
 	{
-		(*p).x = (int)round((*p).x * cos((*map_prop)->grades * M_PI / 200.0)
-				- (*p).y * sin((*map_prop)->grades * M_PI / 200.0))
+		(*p).x = (int)round(x * cos((*map_prop)->grades * M_PI / 200.0)
+				- y * sin((*map_prop)->grades * M_PI / 200.0))
 			+ (*win_prop)->offset_x;
-		(*p).y = (int)round((*p).x * sin((*map_prop)->grades * M_PI / 200.0)
-				+ (*p).y * cos((*map_prop)->grades * M_PI / 200.0))
+		(*p).y = (int)round(x * sin((*map_prop)->grades * M_PI / 200.0)
+				+ y * cos((*map_prop)->grades * M_PI / 200.0))
 			- (*win_prop)->offset_y;
 	}
 	else
 	{
-		(*p).x = (int)round((*p).x * cos(0) - (*p).y * sin(0))
+		(*p).x = (int)round(x * cos(0) - y * sin(0))
 			+ (*win_prop)->sphere_correction_x;
-		(*p).y = (int)round((*p).x * sin(0) + (*p).y * cos(0))
+		(*p).y = (int)round(x * sin(0) + y * cos(0))
 			+ height / 2 * (*win_prop)->scale;
 	}
 }
@@ -109,8 +114,8 @@ unsigned char	*transformed_px(t_map_prop **map_prop, int width,
 	half_y = (*win_prop)->height / 2;
 	handle_s(win_prop, map_prop, &p, height);
 	handle_a_s(win_prop, map_prop, &p, width_height);
-	if (p.x <= -half_x || p.x >= half_x - 10
-		|| p.y <= -half_y + 10 || p.y >= half_y)
+	if (p.x <= -half_x || p.x >= half_x
+		|| p.y <= -half_y || p.y >= half_y)
 		return (NULL);
 	return ((*map_prop)->img_data
 		+ (((*win_prop)->height / 2 - (p.y)) * (*map_prop)->line_size)
