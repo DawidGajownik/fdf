@@ -56,7 +56,7 @@ int	line_print_object(char **line, t_object *object,
 		map_height = ft_atoi(line[object->width]);
 		pixel = transformed_px_object(object, width, height, win_prop);
 		if (pixel && pixel_in_screen_object(pixel, win_prop, &object))
-			set_moon_color(pixel, map_height);
+			set_moon_color(pixel, map_height, win_prop);
 		object->width++;
 	}
 	return (0);

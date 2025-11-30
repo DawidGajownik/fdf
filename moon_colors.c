@@ -10,10 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-void	set_moon_color(unsigned char *pixel, int map_height)
+#include "fdf.h"
+
+void	set_moon_color(unsigned char *pixel, int map_height, t_win_prop **win_prop)
 {
 	int	shade;
 
+	map_height = (int)((*win_prop)->color_scaler * map_height);
 	if (map_height < -8000)
 		map_height = -8000;
 	if (map_height > 8000)

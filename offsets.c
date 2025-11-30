@@ -14,7 +14,9 @@
 
 int	offset_z(int multiplier, int map_height, t_map_prop **map_prop)
 {
-	return (-(map_height / multiplier * (*map_prop)->bytes_pp
+	return (
+			-(
+				//map_height / multiplier * (*map_prop)->bytes_pp
 			+ (map_height / multiplier) * (*map_prop)->line_size
 			* (*map_prop)->bytes_pp));
 }

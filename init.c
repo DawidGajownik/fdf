@@ -68,8 +68,8 @@ static int	map_init(t_vars **vars, t_map_prop **map_prop)
 static void	win_init(t_win_prop **win_prop, char **file_content)
 {
 	(*win_prop)->file_split = ft_split(file_content, '\n');
-	(*win_prop)->width = 2500;
-	(*win_prop)->height = 2500;
+	(*win_prop)->width = 1000;
+	(*win_prop)->height = 1000;
 	(*win_prop)->padding = 0;
 	(*win_prop)->offset_x = 0;
 	(*win_prop)->offset_y = 0;
@@ -82,12 +82,18 @@ static void	win_init(t_win_prop **win_prop, char **file_content)
 	(*win_prop)->w_down = 0;
 	(*win_prop)->s_down = 0;
 	(*win_prop)->x_down = 0;
+	(*win_prop)->b_down = 0;
+	(*win_prop)->v_down = 0;
 	(*win_prop)->last_x = 0;
 	(*win_prop)->last_y = 0;
 	(*win_prop)->offset_x = 0;
 	(*win_prop)->offset_y = 0;
 	(*win_prop)->sphere_correction_x = 0;
 	(*win_prop)->sphere_correction_y = 0;
+	(*win_prop)->divider = 1000;
+	(*win_prop)->color_scaler = 1.0;
+	(*win_prop)->cut_front = 0;
+	(*win_prop)->cut_back = 0;
 }
 
 int	init_all(t_win_prop **win_prop, t_vars **vars,

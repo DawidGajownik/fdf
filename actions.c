@@ -40,8 +40,11 @@ int	actions(t_vars **vars)
 	mlx_hook((*vars)->win, 4, 1L << 2, mouse_press, vars);
 	mlx_hook((*vars)->win, 5, 1L << 3, mouse_release, vars);
 	mlx_hook((*vars)->win, 6, 1L << 6, mouse_move, vars);
+	
 	mlx_hook((*vars)->win, 2, 1L << 0, key_press, vars);
-	mlx_hook((*vars)->win, 3, 1L << 1, key_release, vars);
+	mlx_key_hook((*vars)->win, key_hook, vars);
+		mlx_hook((*vars)->win, 3, 1L << 1, key_release, vars);
+
 	return (0);
 }
 

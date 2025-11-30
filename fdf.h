@@ -86,6 +86,8 @@ typedef struct s_win_prop
 	int				w_down;
 	int				s_down;
 	int				x_down;
+	int				b_down;
+	int				v_down;
 	int				last_x;
 	int				last_y;
 	int				offset_x;
@@ -93,6 +95,10 @@ typedef struct s_win_prop
 	int				sphere_correction_x;
 	int				sphere_correction_y;
 	char			**file_split;
+	int				divider;
+	float			color_scaler;
+	int				cut_front;
+	int				cut_back;
 }	t_win_prop;
 
 typedef struct s_vars
@@ -127,7 +133,7 @@ int				init_object(t_vars **vars, t_object **object, char *filename);
 int				set_res_object(t_object *object);
 void			set_hipsometric_color_object(unsigned char *pixel,
 					int map_height, t_object *object, t_win_prop **win_prop);
-void			set_moon_color(unsigned char *pixel, int map_height);
+void			set_moon_color(unsigned char *pixel, int map_height, t_win_prop **win_prop);
 int				draw(char **file_split, t_map_prop **map_prop,
 					t_win_prop **win_prop);
 int				offset_z(int multiplier, int map_height, t_map_prop **map_prop);
@@ -150,6 +156,7 @@ int				mouse_press(int button, int x, int y, void *param);
 int				key_press(int keycode, void *param);
 void			keys_map(int keycode, t_vars **vars);
 int				key_release(int keycode, void *param);
+int				key_hook(int keycode, void *param);
 void			redraw(t_vars **vars);
 void			redraw_object(t_vars **vars);
 unsigned int	color_1200_plus(int map_height);
