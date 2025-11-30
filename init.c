@@ -68,8 +68,8 @@ static int	map_init(t_vars **vars, t_map_prop **map_prop)
 static void	win_init(t_win_prop **win_prop, char **file_content)
 {
 	(*win_prop)->file_split = ft_split(file_content, '\n');
-	(*win_prop)->width = 1080;
-	(*win_prop)->height = 1080;
+	(*win_prop)->width = 2500;
+	(*win_prop)->height = 2500;
 	(*win_prop)->padding = 0;
 	(*win_prop)->offset_x = 0;
 	(*win_prop)->offset_y = 0;

@@ -24,10 +24,16 @@ static char	pixel_in_screen(unsigned char *pixel,
 		return (NULL);
 	return ('t');
 }
-
-// callback ma postać: void put_pixel(int x, int y, void *data);
-void    bresenham(t_vec2 p, t_vec2 n, t_map_prop **map_prop, t_win_prop **win_prop, int map_height)
+static float distance(t_vec2 a, t_vec2 b)
 {
+    return sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+}
+// callback ma postać: void put_pixel(int x, int y, void *data);
+void    bresenham(t_vec2 p, t_vec2 n, t_map_prop **map_prop, t_win_prop **win_prop, int map_height_p, int map_height_n)
+{
+	t_vec2 p0 = p;
+	float full_dist = distance(p0, n);
+
     int dx = abs(n.x - p.x);
     int sx = p.x < n.x ? 1 : -1;
     int dy = -abs(n.y - p.y);
@@ -37,12 +43,19 @@ void    bresenham(t_vec2 p, t_vec2 n, t_map_prop **map_prop, t_win_prop **win_pr
 	unsigned char *pixel;
 	int half_x = (*win_prop)->width / 2;
 	int half_y = (*win_prop)->height / 2;
+	int map_height;
 
     while (1)
     {
 		if (p.x <= -half_x + 1 || p.x >= half_x - 10
 			|| p.y <= -half_y || p.y >= half_y)
 			return (NULL);
+
+		float current_dist = distance(p0, p);
+    	float t = full_dist == 0 ? 0 : current_dist / full_dist;
+
+    	map_height = (int)((1.0f - t) * map_height_p + t * map_height_n);
+
 		pixel = ((*map_prop)->img_data
 		+ (((*win_prop)->height / 2 - (p.y)) * (*map_prop)->line_size)
 		+ (((p.x) + (*win_prop)->width / 2) * (*map_prop)->bytes_pp));
@@ -86,7 +99,7 @@ void get_coords_from_addr(
 }
 
 
-static int	draw_line(t_map_prop **map_prop, t_win_prop **win_prop, char *pixel, unsigned char *next_pixel, int map_height)
+static int	draw_line(t_map_prop **map_prop, t_win_prop **win_prop, char *pixel, unsigned char *next_pixel, int map_height, int map_height_n)
 {
 	t_vec2 p;
 	t_vec2 n;
@@ -94,7 +107,7 @@ static int	draw_line(t_map_prop **map_prop, t_win_prop **win_prop, char *pixel, 
 	get_coords_from_addr(pixel, map_prop, win_prop, &p);
 	get_coords_from_addr(next_pixel, map_prop, win_prop, &n);
 	//ft_printf("punkty %d, %d ,%d ,%d\n", p.x, p.y, n.x, n.y);
-	bresenham(p, n, map_prop, win_prop, map_height);
+	bresenham(p, n, map_prop, win_prop, map_height, map_height_n);
 }
 
 void	paint_point(t_map_prop **map_prop, t_win_prop **win_prop, int map_height, t_vec2 p)
@@ -115,7 +128,7 @@ void	paint_point(t_map_prop **map_prop, t_win_prop **win_prop, int map_height, t
 		if ((*win_prop)->c_down == 1)
 				set_moon_color(pixel, map_height);
 		if ((*win_prop)->c_down == 0)
-				set_hipsometric_color(pixel, map_height, map_prop, win_prop);
+				set_hipsometric_color_brighter(pixel, map_height, map_prop, win_prop);
 }
 
 static float  dist(t_vec2 a, t_vec2 b)
@@ -156,6 +169,24 @@ static int    weighted_height(t_vec2 p, t_vec2 p1, t_vec2 p2, t_vec2 p3, t_vec2 
     return (int)h;
 }
 
+int point_in_poly(int x, int y, t_vec2 poly[4])
+{
+    int inside = 0;
+    for (int i = 0, j = 3; i < 4; j = i++)
+    {
+        int xi = poly[i].x, yi = poly[i].y;
+        int xj = poly[j].x, yj = poly[j].y;
+
+        int intersect = ((yi > y) != (yj > y)) &&
+            (x < (xj - xi) * (float)(y - yi) / (float)(yj - yi + 0.00001f) + xi);
+
+        if (intersect)
+            inside = !inside;
+    }
+    return inside;
+}
+
+
 void	iterate_quad(t_map_prop **map_prop, t_win_prop **win_prop, unsigned char *px1, unsigned char *px2, unsigned char *px3, unsigned char *px4,
 	int mh1, int mh2, int mh3, int mh4)
 {
@@ -169,12 +200,17 @@ void	iterate_quad(t_map_prop **map_prop, t_win_prop **win_prop, unsigned char *p
 	t_vec2 p2;
 	t_vec2 p3;
 	t_vec2 p4;
+	t_vec2 poly[4];
 
 
 	get_coords_from_addr(px1, map_prop, win_prop, &p1);
 	get_coords_from_addr(px2, map_prop, win_prop, &p2);
 	get_coords_from_addr(px3, map_prop, win_prop, &p3);
 	get_coords_from_addr(px4, map_prop, win_prop, &p4);
+	poly[0] = p1;
+	poly[1] = p2;
+	poly[2] = p4;
+	poly[3] = p3;
 	min_x = p1.x;
 	if (p2.x < min_x) min_x = p2.x;
 	if (p3.x < min_x) min_x = p3.x;
@@ -201,9 +237,12 @@ void	iterate_quad(t_map_prop **map_prop, t_win_prop **win_prop, unsigned char *p
 		p.x = min_x;
 		while (p.x <= max_x)
 		{
-			map_height = weighted_height(p, p1, p2, p3, p4,
+			if (point_in_poly(p.x, p.y, poly))
+			{
+				map_height = weighted_height(p, p1, p2, p3, p4,
                                              mh1, mh2, mh3, mh4);
-			paint_point(map_prop, win_prop, map_height, p);
+				paint_point(map_prop, win_prop, map_height, p);
+			}
 			p.x++;
 		}
 		p.y++;
@@ -226,7 +265,7 @@ static int	line_print(char **line, char **next_line,
 	int				next_line_next_map_height;
 	int				z_scale;
 
-	z_scale = 10000;
+	z_scale = 1000;
 
 	width = (*map_prop)->width;
 	(*map_prop)->width = 0;
@@ -248,8 +287,8 @@ static int	line_print(char **line, char **next_line,
 			next_line_map_height = ft_atoi(next_line[(*map_prop)->width]);
 			next_line_pixel = transformed_px(map_prop, width, height, win_prop)
 				+ offset_z(z_scale / (*win_prop)->scale, next_line_map_height, map_prop);
-			if (pixel && next_line_pixel && pixel_in_screen(pixel, win_prop, map_prop) && pixel_in_screen(next_line_pixel, win_prop, map_prop))
-				draw_line(map_prop, win_prop, pixel, next_line_pixel, map_height);
+			/*if (pixel && next_line_pixel && pixel_in_screen(pixel, win_prop, map_prop) && pixel_in_screen(next_line_pixel, win_prop, map_prop))
+				draw_line(map_prop, win_prop, pixel, next_line_pixel, map_height, next_line_map_height);*/
 			(*map_prop)->height--;
 		}
 		(*map_prop)->width++;
@@ -258,8 +297,8 @@ static int	line_print(char **line, char **next_line,
 			next_map_height = ft_atoi(line[(*map_prop)->width]);
 			next_pixel = transformed_px(map_prop, width, height, win_prop)
 				+ offset_z(z_scale / (*win_prop)->scale, next_map_height, map_prop);
-			if (pixel && next_pixel && pixel_in_screen(pixel, win_prop, map_prop) && pixel_in_screen(next_pixel, win_prop, map_prop))
-				draw_line(map_prop, win_prop, pixel, next_pixel, map_height);
+			/*if (pixel && next_pixel && pixel_in_screen(pixel, win_prop, map_prop) && pixel_in_screen(next_pixel, win_prop, map_prop))
+				draw_line(map_prop, win_prop, pixel, next_pixel, map_height, next_map_height);*/
 		}
 		if (next_line && next_line[(*map_prop)->width] != NULL)
 		{
@@ -268,16 +307,22 @@ static int	line_print(char **line, char **next_line,
 			next_line_next_pixel = transformed_px(map_prop, width, height, win_prop)
 				+ offset_z(z_scale / (*win_prop)->scale, next_line_next_map_height, map_prop);
 			//if (pixel && next_line_next_pixel && pixel_in_screen(pixel, win_prop, map_prop) && pixel_in_screen(next_line_next_pixel, win_prop, map_prop))
-				//draw_line(map_prop, win_prop, next_line_pixel, next_line_next_pixel, map_height);
+				//draw_line(map_prop, win_prop, next_line_pixel, next_line_next_pixel, map_height, next_line_next_map_height);
 			(*map_prop)->height--;
 		}
-		/*if (pixel && next_pixel && next_line_pixel && next_line_next_pixel
+		if (pixel && next_pixel && next_line_pixel && next_line_next_pixel
 			&& pixel_in_screen(pixel, win_prop, map_prop)
 			&& pixel_in_screen(next_pixel, win_prop, map_prop)
 			&& pixel_in_screen(next_line_pixel, win_prop, map_prop)
 			&& pixel_in_screen(next_line_next_pixel, win_prop, map_prop))
+			{
 				iterate_quad(map_prop, win_prop, pixel, next_pixel, next_line_pixel, next_line_next_pixel,
-						map_height, next_map_height, next_line_map_height, next_line_next_map_height);*/
+					map_height, next_map_height, next_line_map_height, next_line_next_map_height);
+				//if ((*map_prop)->height < height-1)
+					//draw_line(map_prop, win_prop, pixel, next_line_pixel, map_height, next_line_map_height);
+				//draw_line(map_prop, win_prop, pixel, next_pixel, map_height, next_map_height);
+
+			}
 	}
 	return (0);
 }
