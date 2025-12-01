@@ -12,7 +12,7 @@
 
 #include "fdf.h"
 
-static void	set_color(t_map_prop **map_prop,
+/*static void	set_color(t_map_prop **map_prop,
 t_win_prop **win_prop, int i, char **line)
 {
 	int				j;
@@ -35,9 +35,9 @@ t_win_prop **win_prop, int i, char **line)
 			* (256 / (*map_prop)->low_high_diff);
 		j++;
 	}
-}
+}*/
 
-static int	point_gen(char **line, t_map_prop **map_prop, t_win_prop **win_prop)
+/*static int	point_gen(char **line, t_map_prop **map_prop, t_win_prop **win_prop)
 {
 	int				i;
 
@@ -53,9 +53,9 @@ static int	point_gen(char **line, t_map_prop **map_prop, t_win_prop **win_prop)
 		(*map_prop)->width++;
 	}
 	return (0);
-}
+}*/
 
-int	img_gen(char **file_split, t_map_prop **map_prop, t_win_prop **win_prop)
+/*int	img_gen(char **file_split, t_map_prop **map_prop, t_win_prop **win_prop)
 {
 	char	**line;
 
@@ -69,4 +69,4 @@ int	img_gen(char **file_split, t_map_prop **map_prop, t_win_prop **win_prop)
 		(*map_prop)->height++;
 	}
 	return (0);
-}
+}*/

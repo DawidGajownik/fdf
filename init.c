@@ -73,7 +73,7 @@ static void	win_init(t_win_prop **win_prop, char **file_content)
 	(*win_prop)->padding = 0;
 	(*win_prop)->offset_x = 0;
 	(*win_prop)->offset_y = 0;
-	(*win_prop)->scale = 0;
+	(*win_prop)->scale = 0.0;
 	(*win_prop)->mouse_down = 0;
 	(*win_prop)->ctrl_down = 0;
 	(*win_prop)->q_down = 0;
@@ -92,6 +92,7 @@ static void	win_init(t_win_prop **win_prop, char **file_content)
 	(*win_prop)->sphere_correction_y = 0;
 	(*win_prop)->divider = 1000;
 	(*win_prop)->color_scaler = 1.0;
+	(*win_prop)->prev_color_scaler = 1.0;
 	(*win_prop)->cut_front = 0;
 	(*win_prop)->cut_back = 0;
 }

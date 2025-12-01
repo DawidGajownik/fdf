@@ -74,11 +74,11 @@ void	keys_map_rest(int keycode, t_vars **vars)
 		(*vars)->win_prop->x_down = 1;
 	else if (keycode == 120 && (*vars)->win_prop->x_down)
 		(*vars)->win_prop->x_down = 0;
-			if (keycode == 118 && !(*vars)->win_prop->v_down)
+	if (keycode == 118 && !(*vars)->win_prop->v_down)
 		(*vars)->win_prop->v_down = 1;
 	else if (keycode == 118 && (*vars)->win_prop->v_down)
 		(*vars)->win_prop->v_down = 0;
-			if (keycode == 98 && !(*vars)->win_prop->b_down)
+	if (keycode == 98 && !(*vars)->win_prop->b_down)
 		(*vars)->win_prop->b_down = 1;
 	else if (keycode == 98 && (*vars)->win_prop->b_down)
 		(*vars)->win_prop->b_down = 0;

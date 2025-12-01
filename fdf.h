@@ -61,6 +61,7 @@ typedef struct s_map_prop
 	int				height;
 	int				width;
 	unsigned int	grades;
+	unsigned int	prev_grades;
 	unsigned int	rotation;
 	unsigned int	bits_pp;
 	unsigned int	bytes_pp;
@@ -76,7 +77,8 @@ typedef struct s_win_prop
 {
 	unsigned int	width;
 	unsigned int	height;
-	unsigned int	scale;
+	double			scale;
+	double			prev_scale;
 	unsigned int	padding;
 	int				mouse_down;
 	int				ctrl_down;
@@ -96,7 +98,9 @@ typedef struct s_win_prop
 	int				sphere_correction_y;
 	char			**file_split;
 	int				divider;
+	int				prev_divider;
 	float			color_scaler;
+	float			prev_color_scaler;
 	int				cut_front;
 	int				cut_back;
 }	t_win_prop;
@@ -134,7 +138,7 @@ int				set_res_object(t_object *object);
 void			set_hipsometric_color_object(unsigned char *pixel,
 					int map_height, t_object *object, t_win_prop **win_prop);
 void			set_moon_color(unsigned char *pixel, int map_height, t_win_prop **win_prop);
-int				draw(char **file_split, t_map_prop **map_prop,
+int				draw(t_vars **vars, char **file_split, t_map_prop **map_prop,
 					t_win_prop **win_prop);
 int				offset_z(int multiplier, int map_height, t_map_prop **map_prop);
 int				centering_offset_y(t_win_prop **win_prop, int height);
@@ -165,5 +169,8 @@ unsigned int	color_0_300(int map_height);
 unsigned int	color_0_minus_object(int map_height, t_object *object);
 unsigned int	color_0_minus(int map_height, t_map_prop **map_prop);
 int				init_object(t_vars **vars, t_object **object, char *filename);
+void			strings(t_vars **vars);
+char			*ft_ftoa(float f, int precision);
+char			*ft_strjoin(const char *s1, const char *s2, int q);
 
 #endif

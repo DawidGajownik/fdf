@@ -22,17 +22,18 @@ int	mouse_roll(int button, t_vars **vars)
 			if ((*vars)->object && (*vars)->win_prop->x_down == 1)
 				(*vars)->object->scale++;
 			else
-				(*vars)->win_prop->scale++;
+				(*vars)->win_prop->scale *= 1.1;
 		}
 		else
 		{
 			if ((*vars)->object && (*vars)->win_prop->x_down == 1
 				&& (*vars)->object->scale > 1)
 				(*vars)->object->scale--;
-			else if (
+			else if (1==1
 				//(*vars)->win_prop->x_down == 0 && 
-				(*vars)->win_prop->scale > 1)
-				(*vars)->win_prop->scale--;
+				//(*vars)->win_prop->scale > 0
+				)
+				(*vars)->win_prop->scale /= 1.1;
 		}
 	}
 	redraw(vars);

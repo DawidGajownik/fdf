@@ -314,7 +314,7 @@ static int	line_print(char **line, char **next_line,
 				//draw_line(map_prop, win_prop, next_line_pixel, next_line_next_pixel, map_height, next_line_next_map_height);
 			(*map_prop)->height--;
 		}
-		if (pixel && next_pixel && next_line_pixel && next_line_next_pixel
+			if (pixel && next_pixel && next_line_pixel && next_line_next_pixel
 			&& pixel_in_screen(pixel, win_prop, map_prop)
 			&& pixel_in_screen(next_pixel, win_prop, map_prop)
 			&& pixel_in_screen(next_line_pixel, win_prop, map_prop)
@@ -323,7 +323,7 @@ static int	line_print(char **line, char **next_line,
 			&& (*map_prop)->width <= width - (*win_prop)->cut_back
 			)
 			{
-				
+
 				if ((*map_prop)->height < height-1)
 				{
 					if ((*win_prop)->v_down == 1)
@@ -352,7 +352,7 @@ static void	set_scale(t_win_prop **win_prop, t_map_prop **map_prop)
 		(*win_prop)->scale = 1;
 }
 
-int	draw(char **file_split, t_map_prop **map_prop, t_win_prop **win_prop)
+int	draw(t_vars **vars, char **file_split, t_map_prop **map_prop, t_win_prop **win_prop)
 {
 	char	**line;
 	char	**next_line = NULL;
@@ -378,5 +378,6 @@ int	draw(char **file_split, t_map_prop **map_prop, t_win_prop **win_prop)
 			//free_mlx(next_line, NULL, NULL);
 		(*map_prop)->height++;
 	}
+	strings(vars);
 	return (0);
 }

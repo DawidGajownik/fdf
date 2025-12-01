@@ -37,7 +37,7 @@ int	fdf(char *filename, char *filename2)
 
 	if (init_all(&win_prop, &vars, &map_prop, filename) < 0
 		|| set_res(win_prop->file_split, &map_prop) < 0
-		|| draw(win_prop->file_split, &map_prop, &win_prop) < 0)
+		|| draw(&vars, win_prop->file_split, &map_prop, &win_prop) < 0)
 		return (-1);
 	mlx_put_image_to_window(vars->mlx, vars->win, vars->img, 400, 0);
 	if (proceed_second_parameter(&vars, filename2) < 0)

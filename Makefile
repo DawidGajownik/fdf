@@ -3,7 +3,7 @@ PROGRAM_NAME = fdf
 
 CC = gcc
 
-MY_SOURCES = ft_printf/ft_printf.c ft_printf/ft_printf_char.c ft_printf/ft_printf_number.c ft_printf/ft_printf_number_base.c ft_printf/ft_printf_number_unsigned.c ft_printf/ft_printf_pointer.c ft_printf/ft_printf_string.c ft_atoi.c ft_split.c fdf.c cleanup.c draw.c draw3d.c actions.c mouse_actions.c set_hipcometric_color.c keys_actions.c init.c map_utils.c hipsometric_colors.c moon_colors.c offsets.c surface_utils.c objects_utils.c init_object.c
+MY_SOURCES = ft_printf/ft_printf.c ft_printf/ft_printf_char.c ft_printf/ft_printf_number.c ft_printf/ft_printf_number_base.c ft_printf/ft_printf_number_unsigned.c ft_printf/ft_printf_pointer.c ft_printf/ft_printf_string.c ft_atoi.c ft_split.c fdf.c cleanup.c draw.c draw3d.c actions.c mouse_actions.c set_hipcometric_color.c keys_actions.c init.c map_utils.c hipsometric_colors.c moon_colors.c offsets.c surface_utils.c objects_utils.c init_object.c ft_ftoa.c ft_strjoin.c
 
 MY_OBJECTS = $(MY_SOURCES:.c=.o)
 
