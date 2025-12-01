@@ -172,5 +172,7 @@ int				init_object(t_vars **vars, t_object **object, char *filename);
 void			strings(t_vars **vars);
 char			*ft_ftoa(float f, int precision);
 char			*ft_strjoin(const char *s1, const char *s2, int q);
+unsigned int	ft_atoi_hex(const char *str);
+
 
 #endif

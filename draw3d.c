@@ -64,7 +64,6 @@ void    bresenham(t_vec2 p, t_vec2 n, t_map_prop **map_prop, t_win_prop **win_pr
 				set_moon_color(pixel, map_height, win_prop);
 		if ((*win_prop)->c_down == 0)
 				set_hipsometric_color(pixel, map_height, map_prop, win_prop);
-		//ft_printf("linia %d, %d ,%d ,%d\n", p.x, p.y, n.x, n.y);
         if (p.x == n.x && p.y == n.y)
             break;
 
@@ -106,7 +105,6 @@ static int	draw_line(t_map_prop **map_prop, t_win_prop **win_prop, char *pixel, 
 
 	get_coords_from_addr(pixel, map_prop, win_prop, &p);
 	get_coords_from_addr(next_pixel, map_prop, win_prop, &n);
-	//ft_printf("punkty %d, %d ,%d ,%d\n", p.x, p.y, n.x, n.y);
 	bresenham(p, n, map_prop, win_prop, map_height, map_height_n);
 }
 
@@ -271,9 +269,9 @@ static int	line_print(char **line, char **next_line,
 	(*map_prop)->width = 0;
 	while (line[(*map_prop)->width])
 	{
-		map_height = ft_atoi(line[(*map_prop)->width]);
+		map_height = ft_atoi_hex(line[(*map_prop)->width]);
 		pixel = transformed_px(map_prop, width, height, win_prop)
-			+ offset_z((*win_prop)->divider / (*win_prop)->scale, map_height, map_prop)
+			//+ offset_z((*win_prop)->divider / (*win_prop)->scale, map_height, map_prop)
 			;
 		/*if (pixel && pixel_in_screen(pixel, win_prop, map_prop))
 		{
@@ -285,9 +283,9 @@ static int	line_print(char **line, char **next_line,
 		if (next_line && next_line[(*map_prop)->width] != NULL)
 		{
 			(*map_prop)->height++;
-			next_line_map_height = ft_atoi(next_line[(*map_prop)->width]);
+			next_line_map_height = ft_atoi_hex(next_line[(*map_prop)->width]);
 			next_line_pixel = transformed_px(map_prop, width, height, win_prop)
-				+ offset_z((*win_prop)->divider / (*win_prop)->scale, next_line_map_height, map_prop)
+				//+ offset_z((*win_prop)->divider / (*win_prop)->scale, next_line_map_height, map_prop)
 				;
 			/*if (pixel && next_line_pixel && pixel_in_screen(pixel, win_prop, map_prop) && pixel_in_screen(next_line_pixel, win_prop, map_prop))
 				draw_line(map_prop, win_prop, pixel, next_line_pixel, map_height, next_line_map_height);*/
@@ -296,9 +294,9 @@ static int	line_print(char **line, char **next_line,
 		(*map_prop)->width++;
 		if (line[(*map_prop)->width])
 		{
-			next_map_height = ft_atoi(line[(*map_prop)->width]);
+			next_map_height = ft_atoi_hex(line[(*map_prop)->width]);
 			next_pixel = transformed_px(map_prop, width, height, win_prop)
-				+ offset_z((*win_prop)->divider / (*win_prop)->scale, next_map_height, map_prop)
+				//+ offset_z((*win_prop)->divider / (*win_prop)->scale, next_map_height, map_prop)
 				;
 			/*if (pixel && next_pixel && pixel_in_screen(pixel, win_prop, map_prop) && pixel_in_screen(next_pixel, win_prop, map_prop))
 				draw_line(map_prop, win_prop, pixel, next_pixel, map_height, next_map_height);*/
@@ -306,14 +304,15 @@ static int	line_print(char **line, char **next_line,
 		if (next_line && next_line[(*map_prop)->width] != NULL)
 		{
 			(*map_prop)->height++;
-			next_line_next_map_height = ft_atoi(next_line[(*map_prop)->width]);
+			next_line_next_map_height = ft_atoi_hex(next_line[(*map_prop)->width]);
 			next_line_next_pixel = transformed_px(map_prop, width, height, win_prop)
-				+ offset_z((*win_prop)->divider / (*win_prop)->scale, next_line_next_map_height, map_prop)
+				//+ offset_z((*win_prop)->divider / (*win_prop)->scale, next_line_next_map_height, map_prop)
 				;
 			//if (pixel && next_line_next_pixel && pixel_in_screen(pixel, win_prop, map_prop) && pixel_in_screen(next_line_next_pixel, win_prop, map_prop))
 				//draw_line(map_prop, win_prop, next_line_pixel, next_line_next_pixel, map_height, next_line_next_map_height);
 			(*map_prop)->height--;
 		}
+
 			if (pixel && next_pixel && next_line_pixel && next_line_next_pixel
 			&& pixel_in_screen(pixel, win_prop, map_prop)
 			&& pixel_in_screen(next_pixel, win_prop, map_prop)
