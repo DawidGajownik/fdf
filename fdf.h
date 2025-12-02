@@ -90,6 +90,7 @@ typedef struct s_win_prop
 	int				x_down;
 	int				b_down;
 	int				v_down;
+	int				z_down;
 	int				last_x;
 	int				last_y;
 	int				offset_x;
@@ -140,7 +141,7 @@ void			set_hipsometric_color_object(unsigned char *pixel,
 void			set_moon_color(unsigned char *pixel, int map_height, t_win_prop **win_prop);
 int				draw(t_vars **vars, char **file_split, t_map_prop **map_prop,
 					t_win_prop **win_prop);
-int				offset_z(int multiplier, int map_height, t_map_prop **map_prop);
+int				offset_z(t_win_prop **win_prop, int map_height, t_map_prop **map_prop);
 int				centering_offset_y(t_win_prop **win_prop, int height);
 int				centering_offset_x(t_win_prop **win_prop, int width);
 int				perspective_offset_x(t_win_prop **win_prop, int out_x,

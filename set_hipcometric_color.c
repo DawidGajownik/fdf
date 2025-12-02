@@ -55,8 +55,7 @@ void	set_hipsometric_color_brighter(unsigned char *pixel, int map_height,
 void	set_hipsometric_color(unsigned char *pixel, int map_height,
 	t_map_prop **map_prop, t_win_prop **win_prop)
 {
-	*(unsigned int *)pixel = map_height;
-	/*map_height = (int)((*win_prop)->color_scaler * map_height);
+	map_height = (int)((*win_prop)->color_scaler * map_height);
 	if (map_height <= 0)
 		*(unsigned int *)pixel = color_0_minus(map_height, map_prop);
 	else if (map_height < 300)
@@ -64,5 +63,5 @@ void	set_hipsometric_color(unsigned char *pixel, int map_height,
 	else if (map_height < 1200)
 		*(unsigned int *)pixel = color_300_1200(map_height);
 	else
-		*(unsigned int *)pixel = color_1200_plus(map_height);*/
+		*(unsigned int *)pixel = color_1200_plus(map_height);
 }

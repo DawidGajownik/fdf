@@ -84,6 +84,7 @@ static void	win_init(t_win_prop **win_prop, char **file_content)
 	(*win_prop)->x_down = 0;
 	(*win_prop)->b_down = 0;
 	(*win_prop)->v_down = 0;
+	(*win_prop)->z_down = 0;
 	(*win_prop)->last_x = 0;
 	(*win_prop)->last_y = 0;
 	(*win_prop)->offset_x = 0;

@@ -14,6 +14,8 @@
 
 unsigned int	color_0_minus(int map_height, t_map_prop **map_prop)
 {
+	if ((*map_prop)->low_high_diff == 0)
+		(*map_prop)->low_high_diff = 1;
 	return (0x00AAAAFF + 256 * 256 * (map_height / 32)
 		* (256 / (*map_prop)->low_high_diff)
 		+ 256 * (map_height / 32)

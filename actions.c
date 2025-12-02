@@ -118,6 +118,16 @@ void	strings(t_vars **vars)
 		mlx_string_put((*vars)->mlx, (*vars)->win, 20, 240, 0x00000000, "X - zooming object: ON");
 		mlx_string_put((*vars)->mlx, (*vars)->win, 20, 240, 0x00FFFFFF, "X - zooming object: OFF");
 	}
+	if ((*vars)->win_prop->z_down == 1)
+	{
+		mlx_string_put((*vars)->mlx, (*vars)->win, 20, 260, 0x00000000, "Z - hights.fdf");
+		mlx_string_put((*vars)->mlx, (*vars)->win, 20, 260, 0x00FFFFFF, "Z - colors.fdf");
+	}
+	if ((*vars)->win_prop->z_down == 0)
+	{
+		mlx_string_put((*vars)->mlx, (*vars)->win, 20, 260, 0x00000000, "Z - colors.fdf");
+		mlx_string_put((*vars)->mlx, (*vars)->win, 20, 260, 0x00FFFFFF, "Z - hights.fdf");
+	}
 }
 
 void	redraw(t_vars **vars)

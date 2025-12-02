@@ -12,8 +12,12 @@
 
 #include "fdf.h"
 
-int	offset_z(int multiplier, int map_height, t_map_prop **map_prop)
+int	offset_z(t_win_prop **win_prop, int map_height, t_map_prop **map_prop)
 {
+	int multiplier;
+	if ((*win_prop)->z_down == 1)
+		return (0);
+	multiplier = (*win_prop)->divider / (*win_prop)->scale;
 	return (
 			-(
 				//map_height / multiplier * (*map_prop)->bytes_pp

@@ -100,6 +100,10 @@ void	keys_map(int keycode, t_vars **vars)
 		(*vars)->win_prop->a_down = 1;
 	else if (keycode == 97 && (*vars)->win_prop->a_down)
 		(*vars)->win_prop->a_down = 0;
+	if (keycode == 122 && !(*vars)->win_prop->z_down)
+		(*vars)->win_prop->z_down = 1;
+	else if (keycode == 122 && (*vars)->win_prop->z_down)
+		(*vars)->win_prop->z_down = 0;
 	keys_map_rest(keycode, vars);
 	key_hook(keycode, vars);
 }
