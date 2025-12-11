@@ -29,10 +29,7 @@ int	mouse_roll(int button, t_vars **vars)
 			if ((*vars)->object && (*vars)->win_prop->x_down == 1
 				&& (*vars)->object->scale > 1)
 				(*vars)->object->scale--;
-			else if (1==1
-				//(*vars)->win_prop->x_down == 0 && 
-				//(*vars)->win_prop->scale > 0
-				)
+			else
 				(*vars)->win_prop->scale /= 1.1;
 		}
 	}
@@ -102,7 +99,7 @@ int	mouse_move(int x, int y, void *param)
 	dx = x - (*vars)->win_prop->last_x;
 	dy = y - (*vars)->win_prop->last_y;
 	if ((*vars)->win_prop->mouse_down
-		&& (dx > 25 || dy > 25 || dx < -25 || dy < -25))
+		&& (dx > 15 || dy > 15 || dx < -15 || dy < -15))
 	{
 		move_correction(vars, dx, dy);
 		(*vars)->win_prop->last_x = x;

@@ -13,7 +13,7 @@
 #include "fdf.h"
 
 unsigned char	*transformed_px_object(t_object *object,
-	int width, int height, t_win_prop **win_prop)
+	t_size s, t_win_prop **win_prop)
 {
 	int		half_x;
 	int		half_y;
@@ -29,10 +29,10 @@ unsigned char	*transformed_px_object(t_object *object,
 			- p.y * sin(object->grades * M_PI / 200.0)) + object->offset_x;
 	p.y = (int)round(p.x * sin(object->grades * M_PI / 200.0)
 			+ p.y * cos(object->grades * M_PI / 200.0));
-	w_h.x = width * 1 / 4;
-	w_h.y = height * 1 / 4;
-	p = map_to_sphere(p, w_h, height / 2 * object->scale
-			/ 4, height / 2 * 1 / 4);
+	w_h.x = s.width * 1 / 4;
+	w_h.y = s.height * 1 / 4;
+	p = map_to_sphere(p, w_h, s.height / 2 * object->scale
+			/ 4, s.height / 2 * 1 / 4);
 	if (p.x <= -half_x || p.x >= half_x || p.y <= -half_y || p.y >= half_y)
 		return (NULL);
 	return (object->img_data
@@ -68,26 +68,22 @@ static void	handle_s(t_win_prop **win_prop,
 }
 
 static	void	handle_a_s(t_win_prop **win_prop, t_map_prop **map_prop,
-	t_vec2 *p, t_vec2 width_height)
+	t_vec2 *p, t_size s)
 {
-	int		height;
-	int		width;
 	t_vec2	w_h;
 
-	width = width_height.x;
-	height = width_height.y;
 	if ((*win_prop)->a_down == 1 && (*win_prop)->s_down == 0)
 	{
 		(*p).x = (*p).x + perspective_offset_x(win_prop,
-				(*p).x, (*p).y, height);
-		(*p).y = (*p).y + perspective_offset_y(map_prop, height);
+				(*p).x, (*p).y, s.height);
+		(*p).y = (*p).y + perspective_offset_y(map_prop, s.height);
 	}
 	if ((*win_prop)->s_down == 1)
 	{
-		w_h.x = width * (*win_prop)->scale;
-		w_h.y = height * (*win_prop)->scale;
-		(*p) = map_to_sphere((*p), w_h, height
-				/ 2 * (*win_prop)->scale, height / 2 * (*win_prop)->scale);
+		w_h.x = s.width * (*win_prop)->scale;
+		w_h.y = s.height * (*win_prop)->scale;
+		(*p) = map_to_sphere((*p), w_h, s.height
+				/ 2 * (*win_prop)->scale, s.height / 2 * (*win_prop)->scale);
 	}
 	if ((*win_prop)->s_down == 1 && (*win_prop)->s_down == 1)
 	{
@@ -96,30 +92,30 @@ static	void	handle_a_s(t_win_prop **win_prop, t_map_prop **map_prop,
 	}
 }
 
-unsigned char	*transformed_px(t_map_prop **map_prop, int width,
-	int height, t_win_prop **win_prop)
+unsigned char	*transformed_px(t_vars **vars, t_size s, int map_height)
 {
 	int		half_x;
 	int		half_y;
 	t_vec2	p;
-	t_vec2	width_height;
 
-	width_height.x = width;
-	width_height.y = height;
-	p.x = ((*map_prop)->width * (*win_prop)->scale - (*win_prop)->width
-			/ 2) + centering_offset_x(win_prop, width);
-	p.y = -((*map_prop)->height * (*win_prop)->scale - (*win_prop)->height
-			/ 2) - centering_offset_y(win_prop, height);
-	half_x = (*win_prop)->width / 2;
-	half_y = (*win_prop)->height / 2;
-	handle_s(win_prop, map_prop, &p, height);
-	handle_a_s(win_prop, map_prop, &p, width_height);
+	p.x = ((*vars)->map_prop->width * (*vars)->win_prop->scale
+			- (*vars)->win_prop->width / 2);
+	p.y = -((*vars)->map_prop->height * (*vars)->win_prop->scale
+			- (*vars)->win_prop->height / 2);
+	p.x = p.x + centering_offset_x(&((*vars)->win_prop), s.width);
+	p.y = p.y - centering_offset_y(&((*vars)->win_prop), s.height);
+	half_x = (*vars)->win_prop->width / 2;
+	half_y = (*vars)->win_prop->height / 2;
+	handle_s(&((*vars)->win_prop), &((*vars)->map_prop), &p, s.height);
+	handle_a_s(&((*vars)->win_prop), &((*vars)->map_prop), &p, s);
 	if (p.x <= -half_x || p.x >= half_x
 		|| p.y <= -half_y || p.y >= half_y)
 		return (NULL);
-	return ((*map_prop)->img_data
-		+ (((*win_prop)->height / 2 - (p.y)) * (*map_prop)->line_size)
-		+ (((p.x) + (*win_prop)->width / 2) * (*map_prop)->bytes_pp));
+	return ((*vars)->map_prop->img_data
+		+ (((*vars)->win_prop->height / 2 - (p.y))
+			* (*vars)->map_prop->line_size)
+		+ (((p.x) + (*vars)->win_prop->width / 2) * (*vars)->map_prop->bytes_pp)
+		+ offset_z((&(*vars)->win_prop), map_height, (&(*vars)->map_prop)));
 }
 
 t_vec2	map_to_sphere(t_vec2 p, t_vec2 w_h,

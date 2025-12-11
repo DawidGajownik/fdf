@@ -12,9 +12,11 @@
 
 #include "fdf.h"
 
-void	set_moon_color(unsigned char *pixel, int map_height, t_win_prop **win_prop)
+void	set_moon_color(unsigned char *pixel, int map_height,
+	t_win_prop **win_prop, int lvl)
 {
-	int	shade;
+	int				shade;
+	unsigned int	color;
 
 	map_height = (int)((*win_prop)->color_scaler * map_height);
 	if (map_height < -8000)
@@ -22,8 +24,9 @@ void	set_moon_color(unsigned char *pixel, int map_height, t_win_prop **win_prop)
 	if (map_height > 8000)
 		map_height = 8000;
 	shade = (map_height + 8000) * 255 / 16000;
-	*(unsigned int *)pixel = (0xFF << 24)
-		| (shade << 16)
-		| (shade << 8)
-		| (shade);
+	color = (0xFF << 24) | (shade << 16) | (shade << 8) | shade;
+	if ((*win_prop)->b_down == 1)
+		*(unsigned int *)pixel = brighten_color(color, lvl);
+	else
+		*(unsigned int *)pixel = color;
 }

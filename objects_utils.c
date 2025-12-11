@@ -45,18 +45,19 @@ int	line_print_object(char **line, t_object *object,
 	t_win_prop **win_prop, int height)
 {
 	unsigned char	*pixel;
-	int				width;
 	int				map_height;
+	t_size			s;
 
+	s.height = height;
 	map_height = 0;
-	width = object->width;
+	s.width = object->width;
 	object->width = 0;
 	while (line[object->width])
 	{
 		map_height = ft_atoi(line[object->width]);
-		pixel = transformed_px_object(object, width, height, win_prop);
+		pixel = transformed_px_object(object, s, win_prop);
 		if (pixel && pixel_in_screen_object(pixel, win_prop, &object))
-			set_moon_color(pixel, map_height, win_prop);
+			set_moon_color(pixel, map_height, win_prop, 0);
 		object->width++;
 	}
 	return (0);

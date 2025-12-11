@@ -1,43 +1,80 @@
-#include <stdlib.h>
-#include <stdio.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_ftoa.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dgajowni <dgajowni@student.42warsaw.p      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/09 18:06:52 by dgajowni          #+#    #+#             */
+/*   Updated: 2025/12/09 18:06:55 by dgajowni         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-char *ft_ftoa(float n, int precision)
+#include "fdf.h"
+
+static void	ft_putint(char *ptr, int n)
 {
-    char *str;
-    int int_part = (int)n;
-    float frac_part = n - int_part;
-    if (frac_part < 0) frac_part = -frac_part;
-    if (int_part < 0) int_part = -int_part;
+	int	len;
+	int	tmp;
 
-    // bufor na liczby: maksymalnie 50 znaków
-    str = malloc(50);
-    if (!str) return NULL;
-
-    char *ptr = str;
-
-    // obsługa znaku
-    if (n < 0) *ptr++ = '-';
-
-    // zapis części całkowitej
-    sprintf(ptr, "%d", int_part);
-
-    // przesunięcie wskaźnika do końca części całkowitej
-    while (*ptr) ptr++;
-
-    if (precision > 0)
-    {
-        *ptr++ = '.';
-
-        for (int i = 0; i < precision; i++)
-        {
-            frac_part *= 10;
-            int digit = (int)frac_part;
-            *ptr++ = '0' + digit;
-            frac_part -= digit;
-        }
-    }
-
-    *ptr = '\0';
-    return str;
+	tmp = n;
+	len = 1;
+	while (tmp >= 10)
+	{
+		tmp /= 10;
+		len++;
+	}
+	ptr[len] = '\0';
+	while (len--)
+	{
+		ptr[len] = (n % 10) + '0';
+		n /= 10;
+	}
 }
 
+static char	*ft_putfrac(char *ptr, float frac, int precision)
+{
+	int	i;
+	int	digit;
+
+	i = 0;
+	while (i < precision)
+	{
+		frac *= 10;
+		digit = (int)frac;
+		*ptr++ = digit + '0';
+		frac -= digit;
+		i++;
+	}
+	*ptr = '\0';
+	return (ptr);
+}
+
+char	*ft_ftoa(float n, int precision)
+{
+	char	*str[2];
+	int		int_part;
+	float	frac_part;
+
+	str[0] = malloc(50);
+	if (!str)
+		return (NULL);
+	str[1] = str[0];
+	int_part = (int)n;
+	frac_part = n - int_part;
+	if (n < 0)
+	{
+		*str[1]++ = '-';
+		int_part = -int_part;
+		frac_part = -frac_part;
+	}
+	ft_putint(str[1], int_part);
+	while (*str[1])
+		str[1]++;
+	if (precision > 0)
+	{
+		*str[1]++ = '.';
+		ft_putfrac(str[1], frac_part, precision);
+	}
+	return (str[0]);
+}

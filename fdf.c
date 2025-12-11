@@ -29,6 +29,13 @@ int	proceed_second_parameter(t_vars **vars, char *filename2)
 	return (0);
 }
 
+int	handle_keypress(int keycode, t_vars *vars)
+{
+	if (keycode == 65307)
+		close_window(vars);
+	return (0);
+}
+
 int	fdf(char *filename, char *filename2)
 {
 	t_vars		*vars;
@@ -42,6 +49,7 @@ int	fdf(char *filename, char *filename2)
 	mlx_put_image_to_window(vars->mlx, vars->win, vars->img, 400, 0);
 	if (proceed_second_parameter(&vars, filename2) < 0)
 		return (-1);
+	mlx_hook(vars->win, 2, 1L << 0, handle_keypress, vars);
 	actions(&vars);
 	mlx_loop_hook(vars->mlx, globe_move, &vars);
 	mlx_hook(vars->win, 17, 0, close_window, vars);

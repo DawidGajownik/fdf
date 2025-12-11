@@ -1,36 +1,55 @@
-#include <stdlib.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dgajowni <dgajowni@student.42warsaw.p      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/29 14:30:26 by dgajowni          #+#    #+#             */
+/*   Updated: 2025/09/29 14:30:27 by dgajowni         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-size_t ft_strlen(const char *s)
+#include "fdf.h"
+
+static size_t	ft_strlen(const char *s)
 {
-    size_t len = 0;
-    while (s[len])
-        len++;
-    return len;
+	size_t	len;
+
+	len = 0;
+	while (s[len])
+		len++;
+	return (len);
 }
 
-char *ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char const *s1, char const *s2, int q)
 {
-    if (!s1 || !s2)
-        return NULL;
+	char	*result;
+	int		i;
 
-    size_t len1 = ft_strlen(s1);
-    size_t len2 = ft_strlen(s2);
-    char *new_str = malloc(len1 + len2 + 1); // +1 na '\0'
-
-    if (!new_str)
-        return NULL;
-
-    size_t i = 0;
-
-    // kopiowanie s1
-    for (; i < len1; i++)
-        new_str[i] = s1[i];
-
-    // kopiowanie s2
-    for (size_t j = 0; j < len2; j++, i++)
-        new_str[i] = s2[j];
-
-    new_str[i] = '\0';
-    return new_str;
+	i = 0;
+	if (!s1 && !s2)
+		return (NULL);
+	if (!s1)
+		result = malloc(ft_strlen(s2) + 1);
+	else if (!s2)
+		result = malloc(ft_strlen(s1) + 1);
+	else
+		result = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
+	if (!result)
+		return (NULL);
+	while (s1 && *s1)
+		result[i++] = *s1++;
+	while (s2 && *s2)
+		result[i++] = *s2++;
+	result[i] = '\0';
+	return (result);
 }
-
+/*
+int main ()
+{
+	char* c = "twoj star";
+	char* q = "y pijany";
+	char* result = ft_strjoin(c,q);
+	printf("%s", result);
+}*/

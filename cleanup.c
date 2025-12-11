@@ -64,4 +64,14 @@ void	free_mlx(char **split, t_win_prop **win_prop, t_map_prop **map_prop)
 		free(*win_prop);
 	if (map_prop)
 		free(*map_prop);
+	split = NULL;
+}
+
+int	free_after_error(t_vars **vars, t_win_prop **win_prop,
+	t_map_prop **map_prop)
+{
+	free(*vars);
+	free(*win_prop);
+	free(*map_prop);
+	return (-1);
 }

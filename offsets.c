@@ -14,13 +14,15 @@
 
 int	offset_z(t_win_prop **win_prop, int map_height, t_map_prop **map_prop)
 {
-	int multiplier;
+	int	multiplier;
+
 	if ((*win_prop)->z_down == 1)
 		return (0);
 	multiplier = (*win_prop)->divider / (*win_prop)->scale;
+	if (multiplier == 0)
+		multiplier = 1;
 	return (
-			-(
-				//map_height / multiplier * (*map_prop)->bytes_pp
+		-(
 			+ (map_height / multiplier) * (*map_prop)->line_size
 			* (*map_prop)->bytes_pp));
 }

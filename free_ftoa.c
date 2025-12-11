@@ -1,29 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printf_string.c                                 :+:      :+:    :+:   */
+/*   free_ftoa.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgajowni <dgajowni@student.42warsaw.p      +#+  +:+       +#+        */
+/*   By: dgajowni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/02 15:02:52 by dgajowni          #+#    #+#             */
-/*   Updated: 2025/10/02 15:02:53 by dgajowni         ###   ########.fr       */
+/*   Created: 2025/12/10 16:17:48 by dgajowni          #+#    #+#             */
+/*   Updated: 2025/12/10 16:17:49 by dgajowni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "fdf.h"
 
-int	ft_printf_string(char *s)
+void	free_ftoa(char *first, char *second, char *third, char *fourth)
 {
-	int	i;
-
-	if (s == NULL)
-		return (ft_printf_string("(null)"));
-	i = 0;
-	while (*s)
-	{
-		ft_printf_char(*s);
-		s++;
-		i++;
-	}
-	return (i);
+	free(first);
+	free(second);
+	free(third);
+	free(fourth);
 }

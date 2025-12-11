@@ -18,14 +18,20 @@ char	*read_file(char *filename, ssize_t *bytes_read)
 	char	*file_content;
 
 	fd = open(filename, O_RDONLY);
-	if (!fd < 0)
+	if (fd < 0)
 		return (NULL);
 	file_content = malloc(BUFFER_SIZE + 1);
 	if (!file_content)
+	{
+		free(file_content);
 		return (NULL);
+	}
 	*bytes_read = read(fd, file_content, BUFFER_SIZE);
-	if (bytes_read < 0)
+	if (*bytes_read <= 0)
+	{
+		free(file_content);
 		return (NULL);
+	}
 	close(fd);
 	file_content[*bytes_read] = '\0';
 	return (file_content);
@@ -55,6 +61,7 @@ static int	map_init(t_vars **vars, t_map_prop **map_prop)
 	(*map_prop)->height_offset = 0;
 	(*map_prop)->low_high_diff = 0;
 	(*map_prop)->grades = 0;
+	(*map_prop)->prev_grades = 0;
 	(*map_prop)->img_data = mlx_get_data_addr((*vars)->img,
 			&(*map_prop)->bits_pp, &(*map_prop)->line_size,
 			&(*map_prop)->endian);
@@ -68,7 +75,7 @@ static int	map_init(t_vars **vars, t_map_prop **map_prop)
 static void	win_init(t_win_prop **win_prop, char **file_content)
 {
 	(*win_prop)->file_split = ft_split(file_content, '\n');
-	(*win_prop)->width = 1000;
+	(*win_prop)->width = 1400;
 	(*win_prop)->height = 1000;
 	(*win_prop)->padding = 0;
 	(*win_prop)->offset_x = 0;
@@ -92,10 +99,6 @@ static void	win_init(t_win_prop **win_prop, char **file_content)
 	(*win_prop)->sphere_correction_x = 0;
 	(*win_prop)->sphere_correction_y = 0;
 	(*win_prop)->divider = 1000;
-	(*win_prop)->color_scaler = 1.0;
-	(*win_prop)->prev_color_scaler = 1.0;
-	(*win_prop)->cut_front = 0;
-	(*win_prop)->cut_back = 0;
 }
 
 int	init_all(t_win_prop **win_prop, t_vars **vars,
@@ -112,8 +115,15 @@ t_map_prop **map_prop, char *filename)
 		return (-1);
 	(*vars)->file_content = read_file(filename, &(*map_prop)->bytes_read);
 	if (!(*vars)->file_content)
-		return (-1);
+		return (free_after_error(vars, win_prop, map_prop));
 	win_init(win_prop, (*vars)->file_content);
+	(*win_prop)->color_scaler = 1.0;
+	(*win_prop)->prev_color_scaler = 1.0;
+	(*win_prop)->cut_front = 0;
+	(*win_prop)->cut_back = 0;
+	(*win_prop)->prev_scale = 0;
+	(*win_prop)->divider = 1000;
+	(*win_prop)->prev_divider = 1000;
 	if (vars_init(vars, win_prop, filename) < 0)
 		return (-1);
 	if (map_init(vars, map_prop) < 0)
